@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX 라이팅 패턴 카드</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #faf9f7;
+  --white: #ffffff;
+  --orange: #f47b20;
+  --orange-light: #fff4ec;
+  --orange-border: #ffd4ae;
+  --green: #2e9e6b;
+  --green-light: #edfaf4;
+  --red: #d94f3d;
+  --red-light: #fdf0ee;
+  --ink: #1a1a1a;
+  --ink2: #444;
+  --muted: #888;
+  --border: #e8e4dc;
+  --rule-bg: #f5f3ef;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Noto Sans KR', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── 상단 바 ── */
+.top-bar {
+  background: var(--ink);
+  padding: 14px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.top-bar-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #fff;
+  letter-spacing: 0.1em;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.last-updated {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #555;
+}
+
+.sync-btn {
+  background: none;
+  border: 1px solid #333;
+  color: #888;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sync-btn:hover { border-color: var(--orange); color: var(--orange); }
+.sync-btn.syncing { border-color: #5b7fff; color: #5b7fff; }
+.sync-btn.syncing .sync-icon { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 히어로 ── */
+.hero {
+  background: var(--white);
+  padding: 56px 48px 44px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 14px;
+}
+
+.hero h1 {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.hero h1 span { color: var(--orange); }
+
+.hero-desc {
+  font-size: 14px;
+  color: var(--ink2);
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 480px;
+}
+
+/* ── 카드 탭 네비 ── */
+.tab-nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 16px 24px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+.tab-btn.coming { opacity: 0.4; pointer-events: none; }
+
+.tab-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+
+.tab-btn.active .tab-badge { background: var(--orange-light); color: var(--orange); }
+.tab-btn:not(.active) .tab-badge { background: var(--rule-bg); color: var(--muted); }
+.tab-btn.coming .tab-badge { background: var(--rule-bg); color: var(--border); }
+
+/* ── 메인 콘텐츠 ── */
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ── 섹션 타이틀 ── */
+.sec-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── 구조 블록 ── */
+.structure-block {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.structure-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.struct-part {
+  flex: 1;
+  padding: 20px 22px;
+  border-radius: 10px;
+}
+
+.struct-part.main {
+  background: var(--orange-light);
+  border: 1.5px solid var(--orange-border);
+}
+
+.struct-part.sub {
+  background: var(--rule-bg);
+  border: 1.5px dashed var(--border);
+}
+
+.struct-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.struct-part.main .struct-badge { background: var(--orange); color: white; }
+.struct-part.sub .struct-badge { background: var(--border); color: var(--muted); }
+
+.struct-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.struct-desc {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.optional-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+}
+
+.structure-note {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+/* ── 규칙 카드 ── */
+.rules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.rule-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+.rule-card.full { grid-column: 1 / -1; }
+
+.rule-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--orange);
+  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+}
+
+.rule-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.rule-body {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.verb-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.verb-table th {
+  background: var(--rule-bg);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.verb-table td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.tag-active { color: var(--green); font-weight: 600; }
+.tag-passive { color: var(--orange); font-weight: 600; }
+
+.word-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.word-col-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.word-col.bad .word-col-title { color: var(--red); }
+.word-col.good .word-col-title { color: var(--green); }
+
+.word-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin: 3px 3px 3px 0;
+}
+
+.word-col.bad .word-tag { background: var(--red-light); color: var(--red); text-decoration: line-through; }
+.word-col.good .word-tag { background: var(--green-light); color: var(--green); }
+
+/* ── 예시 ── */
+.examples-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.example-card {
+  border-radius: 12px;
+  padding: 22px 24px;
+  border: 1.5px solid var(--border);
+}
+
+.example-card.bad { background: #fdfcfb; }
+.example-card.good { background: var(--orange-light); border-color: var(--orange); }
+
+.ex-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.example-card.bad .ex-label { color: var(--muted); }
+.example-card.good .ex-label { color: var(--orange); }
+
+.ex-item {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ex-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.ex-context {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+
+.ex-main {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+
+.ex-sub {
+  font-size: 12px;
+  color: var(--ink2);
+  font-weight: 300;
+}
+
+.ex-annotation {
+  font-size: 10px;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.example-card.bad .ex-annotation { color: var(--red); }
+.example-card.good .ex-annotation { color: var(--green); }
+
+/* ── LLM 프롬프트 ── */
+.prompt-block {
+  background: #111318;
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.prompt-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.prompt-block-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5b7fff;
+}
+
+.copy-btn {
+  background: none;
+  border: 1px solid #2a2d35;
+  color: #888;
+  font-size: 11px;
+  font-family: var(--mono);
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover { border-color: #5b7fff; color: #5b7fff; }
+.copy-btn.copied { border-color: #34d399; color: #34d399; }
+
+.prompt-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.9;
+  color: #c9d1e0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── 체크리스트 ── */
+.checklist {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.check-item:last-child { border-bottom: none; }
+
+.check-box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  font-size: 12px;
+}
+
+.check-box.checked { background: var(--orange); border-color: var(--orange); color: white; }
+.check-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 300; }
+
+/* ── 로딩 / 에러 ── */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.error-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px;
+  text-align: center;
+  max-width: 520px;
+  margin: 60px auto;
+}
+
+.error-icon { font-size: 32px; margin-bottom: 16px; }
+.error-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.error-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+
+.error-steps {
+  background: var(--rule-bg);
+  border-radius: 8px;
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 2;
+}
+
+.error-steps strong { color: var(--orange); font-family: var(--mono); }
+
+/* ── 설정 패널 ── */
+.settings-btn {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.settings-btn:hover { color: var(--orange); }
+
+.settings-panel {
+  display: none;
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 420px;
+  background: #0e0f11;
+  z-index: 200;
+  padding: 32px;
+  overflow-y: auto;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.4);
+}
+
+.settings-panel.open { display: block; }
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.settings-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5b7fff;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.close-btn:hover { color: #fff; }
+
+.settings-field {
+  margin-bottom: 20px;
+}
+
+.settings-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5b7fff;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.settings-input {
+  width: 100%;
+  background: #1e2026;
+  border: 1px solid #2a2d35;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #c9d1e0;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.settings-input:focus { border-color: #5b7fff; }
+
+.settings-desc {
+  font-size: 11px;
+  color: #555;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+.settings-save-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #5b7fff, #a78bfa);
+  border: none;
+  border-radius: 8px;
+  padding: 13px;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.15s;
+}
+
+.settings-save-btn:hover { opacity: 0.9; }
+
+.settings-guide {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #1e2026;
+}
+
+.guide-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 14px;
+}
+
+.guide-step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: #888;
+  line-height: 1.6;
+}
+
+.guide-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #5b7fff;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+}
+
+.overlay.open { display: block; }
+
+/* ── 연관 패턴 ── */
+.related {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.related-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  background: var(--white);
+  opacity: 0.45;
+}
+
+.related-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.related-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.related-desc {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.soon {
+  font-size: 9px;
+  font-family: var(--mono);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+
+/* ── 탭 패널 ── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- 설정 오버레이 -->
+<div class="overlay" id="overlay" onclick="closeSettings()"></div>
+
+<!-- 설정 패널 -->
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-header">
+    <div class="settings-title">⚙ 시트 연결 설정</div>
+    <button class="close-btn" onclick="closeSettings()">×</button>
+  </div>
+
+  <div class="settings-field">
+    <label class="settings-label">Google Sheets ID</label>
+    <input class="settings-input" id="sheetIdInput" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
+    <div class="settings-desc">시트 URL에서 /d/ 뒤의 긴 문자열이에요.<br>예) docs.google.com/spreadsheets/d/<strong style="color:#5b7fff">여기부분</strong>/edit</div>
+  </div>
+
+  <div class="settings-field">
+    <label class="settings-label">시트 이름 (탭 이름)</label>
+    <input class="settings-input" id="sheetNameInput" placeholder="성공메시지" />
+    <div class="settings-desc">스프레드시트 하단의 탭 이름을 그대로 입력하세요.</div>
+  </div>
+
+  <button class="settings-save-btn" onclick="saveSettings()">저장하고 불러오기</button>
+
+  <div class="settings-guide">
+    <div class="guide-title">Google Sheets 준비 방법</div>
+    <div class="guide-step">
+      <div class="guide-num">01</div>
+      <div>Google Sheets에서 새 스프레드시트를 만들어요.</div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">02</div>
+      <div>공유 설정 → <strong style="color:#5b7fff">"링크가 있는 모든 사용자"</strong>로 변경해요. (뷰어 권한)</div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">03</div>
+      <div>아래 형식에 맞게 내용을 입력해요. 첫 행은 반드시 키(key) 이름이어야 해요.</div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">04</div>
+      <div>URL에서 Sheets ID를 복사해서 위에 붙여넣으면 끝이에요.</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px; padding: 14px 16px; background: #1e2026; border-radius: 8px;">
+    <div style="font-family: var(--mono); font-size: 10px; color: #5b7fff; margin-bottom: 10px; letter-spacing: 0.08em;">필수 컬럼 구조</div>
+    <div style="font-family: var(--mono); font-size: 11px; color: #888; line-height: 2;">
+      key | value<br>
+      <span style="color:#fbbf24">card_title</span> | 성공 메시지<br>
+      <span style="color:#fbbf24">card_desc</span> | 요청이 성공적으로...<br>
+      <span style="color:#fbbf24">main_name</span> | 메인 문구<br>
+      <span style="color:#fbbf24">main_desc</span> | 행동의 결과 전달...<br>
+      <span style="color:#fbbf24">sub_name</span> | 서브 문구<br>
+      <span style="color:#fbbf24">sub_desc</span> | 부가정보 보완...<br>
+      <span style="color:#fbbf24">rule1_title</span> | 사용자를 주체로<br>
+      <span style="color:#fbbf24">rule1_body</span> | 고객이 행동을...<br>
+      <span style="color:#fbbf24">prompt_text</span> | 당신은 UX 라이터...<br>
+      <span style="color:#fbbf24">bad_words</span> | 신청 되었습니다,반드시<br>
+      <span style="color:#fbbf24">good_words</span> | 입금했습니다,변경했습니다
+    </div>
+  </div>
+</div>
+
+<!-- 상단 바 -->
+<div class="top-bar">
+  <div class="top-bar-title">UX Writing · Pattern Card System</div>
+  <div class="top-bar-right">
+    <span class="last-updated" id="lastUpdated">—</span>
+    <button class="sync-btn" id="syncBtn" onclick="loadData()">
+      <span class="sync-icon">↻</span> 새로고침
+    </button>
+    <button class="settings-btn" onclick="openSettings()" title="시트 연결 설정">⚙</button>
+  </div>
+</div>
+
+<!-- 히어로 -->
+<div class="hero">
+  <div class="hero-label">Pattern Card System</div>
+  <h1>UX 라이팅 <span>패턴 카드</span></h1>
+  <p class="hero-desc" id="heroDesc">Google Sheets와 연결하면 내용이 자동으로 불러와집니다.<br>우측 상단 ⚙ 버튼을 눌러 시트를 연결하세요.</p>
+</div>
+
+<!-- 탭 네비 -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('success', this)">
+    ✅ 성공 메시지 <span class="tab-badge">완성</span>
+  </button>
+  <button class="tab-btn coming">
+    ⚠️ 오류 메시지 <span class="tab-badge">준비중</span>
+  </button>
+  <button class="tab-btn coming">
+    🔔 경고 메시지 <span class="tab-badge">준비중</span>
+  </button>
+  <button class="tab-btn coming">
+    ℹ️ 안내 메시지 <span class="tab-badge">준비중</span>
+  </button>
+</div>
+
+<!-- 콘텐츠 -->
+<div class="content">
+
+  <!-- 로딩 -->
+  <div class="loading-screen" id="loadingScreen" style="display:none">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">시트에서 불러오는 중...</div>
+  </div>
+
+  <!-- 에러 -->
+  <div id="errorScreen" style="display:none">
+    <div class="error-box">
+      <div class="error-icon">🔗</div>
+      <div class="error-title">시트를 불러올 수 없어요</div>
+      <div class="error-desc" id="errorDesc">Google Sheets가 연결되지 않았어요.<br>우측 상단 ⚙ 버튼을 눌러 시트 ID를 입력해 주세요.</div>
+      <div class="error-steps">
+        <strong>01</strong> 우측 상단 ⚙ 클릭<br>
+        <strong>02</strong> Google Sheets ID 입력<br>
+        <strong>03</strong> 시트 공유 설정 확인 (링크 공개)<br>
+        <strong>04</strong> 저장하고 불러오기 클릭
+      </div>
+    </div>
+  </div>
+
+  <!-- 성공 메시지 패널 (기본 내장 콘텐츠) -->
+  <div class="tab-panel active" id="panel-success">
+
+    <div id="dynamicContent">
+      <!-- 시트 연결 전 기본 콘텐츠 -->
+
+      <!-- 01 구조 -->
+      <div class="sec-title">01 · 메시지 구조</div>
+      <div class="structure-block">
+        <div class="structure-row">
+          <div class="struct-part main">
+            <div class="struct-badge">Main</div>
+            <div class="struct-name" id="mainName">메인 문구</div>
+            <div class="struct-desc" id="mainDesc">행동의 결과를 직접적으로 전달<br>15자 이내 · 마침표 생략</div>
+          </div>
+          <div class="struct-part sub">
+            <div class="struct-badge">Sub <span class="optional-tag">optional</span></div>
+            <div class="struct-name" id="subName">서브 문구</div>
+            <div class="struct-desc" id="subDesc">결과에 관련된 부가정보 보완<br>20자 이내 · 마침표 포함 · 필요시에만</div>
+          </div>
+        </div>
+        <div class="structure-note">※ 메인 + 서브 합산 최대 2줄 이내 유지</div>
+      </div>
+
+      <!-- 02 규칙 -->
+      <div class="sec-title">02 · 작성 규칙</div>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-num">RULE 01</div>
+          <div class="rule-title" id="rule1Title">사용자를 주체로</div>
+          <div class="rule-body" id="rule1Body">고객이 행동을 완료했다는 느낌을 줄 것.<br>시스템이 처리한 맥락이면 피동형 사용.</div>
+          <table class="verb-table">
+            <thead><tr><th>맥락</th><th>어미</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr><td>사용자 행동 결과</td><td class="tag-active">능동형</td><td>입금했습니다</td></tr>
+              <tr><td>시스템 처리 결과</td><td class="tag-passive">피동형</td><td>매수가 체결되었습니다</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-num">RULE 02</div>
+          <div class="rule-title" id="rule2Title">마침표 규칙</div>
+          <div class="rule-body" id="rule2Body"><strong>메인 문구</strong>: 마침표 생략<br><strong>서브 문구</strong>: 마침표 포함<br><br><span style="color:var(--muted);font-size:11px">메인은 제목성 문구, 서브는 완성된 문장</span></div>
+        </div>
+
+        <div class="rule-card full">
+          <div class="rule-num">RULE 03 · 금지어 &amp; 권장어</div>
+          <div class="rule-title">단어 선택 기준</div>
+          <div class="word-grid">
+            <div class="word-col bad">
+              <div class="word-col-title">❌ 금지 패턴</div>
+              <div id="badWords">
+                <span class="word-tag">신청 되었습니다</span>
+                <span class="word-tag">반드시 확인해주세요</span>
+                <span class="word-tag">완료 (명사 단독)</span>
+                <span class="word-tag">정상적으로</span>
+              </div>
+            </div>
+            <div class="word-col good">
+              <div class="word-col-title">✓ 권장 패턴</div>
+              <div id="goodWords">
+                <span class="word-tag">입금했습니다</span>
+                <span class="word-tag">변경했습니다</span>
+                <span class="word-tag">신청했습니다</span>
+                <span class="word-tag">거래내역을 확인해보세요</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 예시 -->
+      <div class="sec-title">03 · Before / After 예시</div>
+      <div class="examples-row">
+        <div class="example-card bad">
+          <div class="ex-label">✕ 개선 전</div>
+          <div id="badExamples">
+            <div class="ex-item">
+              <div class="ex-context">입금 완료 화면</div>
+              <div class="ex-main">입금 신청 되었습니다.</div>
+              <div class="ex-sub">반드시 이체내역을 확인해 주세요.</div>
+              <div class="ex-annotation">피동형 오류 + "반드시" 강압적 + 메인에 마침표</div>
+            </div>
+            <div class="ex-item">
+              <div class="ex-context">이체한도 변경 완료</div>
+              <div class="ex-main">이체한도 변경 완료</div>
+              <div class="ex-annotation">명사형 나열 → 결과 전달 불명확</div>
+            </div>
+          </div>
+        </div>
+        <div class="example-card good">
+          <div class="ex-label">✓ 개선 후</div>
+          <div id="goodExamples">
+            <div class="ex-item">
+              <div class="ex-context">입금 완료 화면</div>
+              <div class="ex-main">입금했습니다</div>
+              <div class="ex-sub">거래내역을 확인해보세요.</div>
+              <div class="ex-annotation">능동형 + 부드러운 안내 + 마침표 규칙 준수</div>
+            </div>
+            <div class="ex-item">
+              <div class="ex-context">이체한도 변경 완료</div>
+              <div class="ex-main">이체한도를 변경했습니다</div>
+              <div class="ex-annotation">능동형 동사 어미로 결과 명확 전달</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 프롬프트 -->
+      <div class="sec-title">04 · LLM 프롬프트 템플릿</div>
+      <div class="prompt-block">
+        <div class="prompt-block-header">
+          <div class="prompt-block-title">복사 후 ChatGPT / Claude에 붙여넣기</div>
+          <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">복사하기</button>
+        </div>
+        <div class="prompt-text" id="promptDisplay"># 역할
+당신은 금융 서비스 UX 라이터입니다.
+아래 규칙과 예시를 참고해 성공 메시지를 작성하세요.
+
+[구조 규칙]
+- 메인 문구: 행동 결과 전달 / 15자 이내 / 마침표 생략
+- 서브 문구: 부가정보 / 20자 이내 / 마침표 포함 / 필요시에만 작성
+- 전체 2줄 이내
+
+[어미 규칙]
+- 사용자가 행동한 결과 → 능동형: "~했습니다"
+- 시스템이 처리한 결과 → 피동형: "~되었습니다"
+
+[금지]
+- "반드시", "정상적으로", 명사형 단독 나열 금지
+- 메인 문구에 마침표 금지
+
+[입력값]
+- 완료된 행동: {예: 비밀번호 변경, 카드 신청}
+- 주체: {사용자 / 시스템}
+- 서브 문구 필요 여부: {필요 / 불필요}
+- 서브 문구 내용: {예: 다음 영업일 적용}
+
+[출력 형식]
+메인 문구:
+서브 문구:</div>
+      </div>
+
+      <!-- 05 체크리스트 -->
+      <div class="sec-title">05 · 작성 후 검증 체크리스트</div>
+      <div class="checklist" id="checklistContainer">
+        <div class="check-item">
+          <div class="check-box" onclick="toggleCheck(this)"></div>
+          <div>
+            <div><strong>메인 문구에 마침표가 없는가?</strong></div>
+            <div class="check-sub">메인은 제목성 문구 → 마침표 생략</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box" onclick="toggleCheck(this)"></div>
+          <div>
+            <div><strong>어미가 맥락에 맞는가?</strong></div>
+            <div class="check-sub">사용자 행동 → 능동형 / 시스템 처리 → 피동형</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box" onclick="toggleCheck(this)"></div>
+          <div>
+            <div><strong>전체 2줄 이내인가?</strong></div>
+            <div class="check-sub">메인 + 서브 합산 기준</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box" onclick="toggleCheck(this)"></div>
+          <div>
+            <div><strong>금지 패턴이 없는가?</strong></div>
+            <div class="check-sub">"반드시", "정상적으로", 명사형 나열 확인</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box" onclick="toggleCheck(this)"></div>
+          <div>
+            <div><strong>서브 문구가 꼭 필요한 정보인가?</strong></div>
+            <div class="check-sub">없어도 이해에 문제없다면 생략</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 연관 패턴 -->
+      <div class="sec-title">06 · 연관 패턴 카드</div>
+      <div class="related">
+        <div class="related-card">
+          <div class="related-type">Pattern Card 02</div>
+          <div class="related-name">오류 메시지 <span class="soon">준비중</span></div>
+          <div class="related-desc">사용자 실수·시스템 오류 유형별 패턴</div>
+        </div>
+        <div class="related-card">
+          <div class="related-type">Pattern Card 03</div>
+          <div class="related-name">경고 메시지 <span class="soon">준비중</span></div>
+          <div class="related-desc">주의가 필요한 상황 알림 패턴</div>
+        </div>
+        <div class="related-card">
+          <div class="related-type">Pattern Card 04</div>
+          <div class="related-name">안내 메시지 <span class="soon">준비중</span></div>
+          <div class="related-desc">정보 전달 목적의 중립적 메시지</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── 설정 저장/로드 ──
+const STORAGE_KEY = 'ux_pattern_sheet';
+
+function getSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch(e) { return {}; }
+}
+
+function saveSettings() {
+  const id = document.getElementById('sheetIdInput').value.trim();
+  const name = document.getElementById('sheetNameInput').value.trim() || '성공메시지';
+  if (!id) { alert('Sheets ID를 입력해 주세요.'); return; }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ sheetId: id, sheetName: name }));
+  closeSettings();
+  loadData();
+}
+
+function openSettings() {
+  const s = getSettings();
+  if (s.sheetId) document.getElementById('sheetIdInput').value = s.sheetId;
+  if (s.sheetName) document.getElementById('sheetNameInput').value = s.sheetName;
+  document.getElementById('settingsPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ── 탭 전환 ──
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── 체크박스 ──
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+}
+
+// ── 프롬프트 복사 ──
+function copyPrompt() {
+  const text = document.getElementById('promptDisplay').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ 복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '복사하기'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── Google Sheets 데이터 로드 ──
+async function loadData() {
+  const s = getSettings();
+  if (!s.sheetId) return; // 시트 미연결 → 기본 콘텐츠 표시
+
+  const syncBtn = document.getElementById('syncBtn');
+  syncBtn.classList.add('syncing');
+  syncBtn.querySelector('.sync-icon').textContent = '↻';
+
+  const sheetName = encodeURIComponent(s.sheetName || '성공메시지');
+  const url = `https://docs.google.com/spreadsheets/d/${s.sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    // Google Sheets JSON 파싱
+    const json = JSON.parse(text.replace(/^.*?({.*}).*?$/s, '$1'));
+    const rows = json.table.rows;
+
+    // key-value 맵으로 변환
+    const data = {};
+    rows.forEach(row => {
+      if (row.c && row.c[0] && row.c[1]) {
+        const key = row.c[0].v?.toString().trim();
+        const val = row.c[1].v?.toString().trim();
+        if (key && val) data[key] = val;
+      }
+    });
+
+    applyData(data);
+
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent =
+      `최종 업데이트 ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('errorDesc').textContent =
+      '시트를 불러오지 못했어요. Sheets ID와 공유 설정을 확인해 주세요.';
+    document.getElementById('errorScreen').style.display = 'block';
+    setTimeout(() => { document.getElementById('errorScreen').style.display = 'none'; }, 5000);
+  }
+
+  syncBtn.classList.remove('syncing');
+  syncBtn.querySelector('.sync-icon').textContent = '↻';
+}
+
+// ── 데이터 적용 ──
+function applyData(d) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+  const setHTML = (id, val) => { const el = document.getElementById(id); if (el && val) el.innerHTML = val; };
+
+  // 히어로
+  if (d.card_desc) document.getElementById('heroDesc').textContent = d.card_desc;
+
+  // 구조
+  set('mainName', d.main_name);
+  set('mainDesc', d.main_desc);
+  set('subName', d.sub_name);
+  set('subDesc', d.sub_desc);
+
+  // 규칙
+  set('rule1Title', d.rule1_title);
+  setHTML('rule1Body', d.rule1_body);
+  set('rule2Title', d.rule2_title);
+  setHTML('rule2Body', d.rule2_body);
+
+  // 금지어/권장어
+  if (d.bad_words) {
+    document.getElementById('badWords').innerHTML =
+      d.bad_words.split(',').map(w => `<span class="word-tag">${w.trim()}</span>`).join('');
+  }
+  if (d.good_words) {
+    document.getElementById('goodWords').innerHTML =
+      d.good_words.split(',').map(w => `<span class="word-tag">${w.trim()}</span>`).join('');
+  }
+
+  // 프롬프트
+  if (d.prompt_text) {
+    document.getElementById('promptDisplay').textContent = d.prompt_text.replace(/\\n/g, '\n');
+  }
+
+  // 체크리스트 (쉼표 구분 문자열)
+  if (d.checklist) {
+    const items = d.checklist.split('|');
+    document.getElementById('checklistContainer').innerHTML = items.map(item => {
+      const [title, sub] = item.split(':');
+      return `<div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div>
+          <div><strong>${title.trim()}</strong></div>
+          ${sub ? `<div class="check-sub">${sub.trim()}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── 초기 실행 ──
+window.addEventListener('DOMContentLoaded', () => {
+  const s = getSettings();
+  if (s.sheetId) {
+    document.getElementById('sheetIdInput').value = s.sheetId;
+    document.getElementById('sheetNameInput').value = s.sheetName || '';
+    loadData();
+  }
+});
+</script>
+</body>
+</html>
