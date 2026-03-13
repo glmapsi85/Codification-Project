@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성공 메시지 패턴 카드 · UX 라이팅 가이드라인</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #faf9f7;
+  --white: #ffffff;
+  --orange: #f47b20;
+  --orange-light: #fff4ec;
+  --orange-border: #ffd4ae;
+  --green: #2e9e6b;
+  --green-light: #edfaf4;
+  --red: #d94f3d;
+  --red-light: #fdf0ee;
+  --ink: #1a1a1a;
+  --ink2: #444;
+  --muted: #888;
+  --rule-bg: #f5f3ef;
+  --border: #e8e4dc;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Noto Sans KR', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  color: var(--ink);
+  padding-bottom: 80px;
+}
+
+/* 상단 네비 */
+.top-bar {
+  background: var(--ink);
+  padding: 14px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #888;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: color 0.15s;
+}
+.back-btn:hover { color: #fff; }
+
+.breadcrumb {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #555;
+}
+
+.breadcrumb span { color: var(--orange); }
+
+/* 페이지 */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+/* 헤더 */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.type-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.header-desc {
+  font-size: 13px;
+  color: var(--ink2);
+  font-weight: 300;
+  max-width: 420px;
+  line-height: 1.7;
+}
+
+.version {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* 섹션 타이틀 */
+.sec-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* 구조 블록 */
+.structure-block {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.structure-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.struct-part {
+  flex: 1;
+  padding: 20px 22px;
+  border-radius: 10px;
+}
+
+.struct-part.main {
+  background: var(--orange-light);
+  border: 1.5px solid var(--orange-border);
+}
+
+.struct-part.sub {
+  background: var(--rule-bg);
+  border: 1.5px dashed var(--border);
+}
+
+.struct-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.struct-part.main .struct-badge { background: var(--orange); color: white; }
+.struct-part.sub .struct-badge { background: var(--border); color: var(--muted); }
+
+.struct-part .struct-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.struct-part .struct-desc {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.optional-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+}
+
+.structure-note {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 300;
+  padding-top: 4px;
+}
+
+/* 규칙 카드 */
+.rules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.rule-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+.rule-card.full { grid-column: 1 / -1; }
+
+.rule-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--orange);
+  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+}
+
+.rule-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.rule-detail {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.verb-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.verb-table th {
+  background: var(--rule-bg);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+}
+
+.verb-table td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.tag-active { color: var(--green); font-weight: 500; }
+.tag-passive { color: var(--orange); font-weight: 500; }
+
+.word-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.word-col-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.word-col.bad .word-col-title { color: var(--red); }
+.word-col.good .word-col-title { color: var(--green); }
+
+.word-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin: 3px 3px 3px 0;
+}
+
+.word-col.bad .word-tag {
+  background: var(--red-light);
+  color: var(--red);
+  text-decoration: line-through;
+}
+
+.word-col.good .word-tag {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+/* 예시 */
+.examples-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.example-card {
+  border-radius: 12px;
+  padding: 22px 24px;
+  border: 1.5px solid var(--border);
+}
+
+.example-card.bad { background: #fdfcfb; }
+.example-card.good { background: var(--orange-light); border-color: var(--orange); }
+
+.ex-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.example-card.bad .ex-label { color: var(--muted); }
+.example-card.good .ex-label { color: var(--orange); }
+
+.ex-item {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ex-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.ex-context {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+
+.ex-main {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+
+.ex-sub {
+  font-size: 12px;
+  color: var(--ink2);
+  font-weight: 300;
+}
+
+.ex-annotation {
+  font-size: 10px;
+  margin-top: 6px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.example-card.bad .ex-annotation { color: var(--red); }
+.example-card.good .ex-annotation { color: var(--green); }
+
+/* LLM 프롬프트 */
+.prompt-block {
+  background: #111318;
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.prompt-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.prompt-block-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5b7fff;
+}
+
+.copy-btn {
+  background: none;
+  border: 1px solid #2a2d35;
+  color: #888;
+  font-size: 11px;
+  font-family: var(--mono);
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.copy-btn:hover { border-color: #5b7fff; color: #5b7fff; }
+.copy-btn.copied { border-color: #34d399; color: #34d399; }
+
+.prompt-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.9;
+  color: #c9d1e0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.p-section { color: #a78bfa; }
+.p-rule { color: #fbbf24; }
+.p-value { color: #34d399; }
+.p-var { color: #60a5fa; }
+.p-comment { color: #4a5568; }
+
+/* 검증 체크리스트 */
+.checklist {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.check-item:last-child { border-bottom: none; }
+
+.check-box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  font-size: 12px;
+}
+
+.check-box.checked { background: var(--orange); border-color: var(--orange); color: white; }
+
+.check-text { line-height: 1.5; }
+.check-text strong { font-weight: 600; }
+.check-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 300; }
+
+/* 연관 패턴 */
+.related {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.related-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  background: var(--white);
+  opacity: 0.5;
+}
+
+.related-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.related-name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.related-desc {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.soon {
+  font-size: 9px;
+  font-family: var(--mono);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 네비 -->
+<div class="top-bar">
+  <a href="index.html" class="back-btn">← 목차로 돌아가기</a>
+  <div class="breadcrumb">UX 라이팅 가이드라인 · <span>성공 메시지</span></div>
+</div>
+
+<div class="page">
+
+  <!-- 헤더 -->
+  <header class="header">
+    <div>
+      <div class="type-label">패턴 카드 · Pattern Card 01</div>
+      <h1>성공 메시지</h1>
+      <p class="header-desc">요청이 성공적으로 처리되었음을 고객이 명확히 인지하고 안심할 수 있도록 돕는 메시지 작성 패턴</p>
+    </div>
+    <div class="version">v1.0 · 2025</div>
+  </header>
+
+  <!-- 01 구조 -->
+  <div class="sec-title">01 · 메시지 구조</div>
+  <div class="structure-block">
+    <div class="structure-row">
+      <div class="struct-part main">
+        <div class="struct-badge">Main</div>
+        <div class="struct-name">메인 문구</div>
+        <div class="struct-desc">행동의 결과를 직접적으로 전달<br>15자 이내 · 마침표 생략</div>
+      </div>
+      <div class="struct-part sub">
+        <div class="struct-badge">Sub <span class="optional-tag">optional</span></div>
+        <div class="struct-name">서브 문구</div>
+        <div class="struct-desc">결과에 관련된 부가정보 보완<br>20자 이내 · 마침표 포함 · 필요시에만</div>
+      </div>
+    </div>
+    <div class="structure-note">※ 메인 + 서브 합산 최대 2줄 이내 유지</div>
+  </div>
+
+  <!-- 02 규칙 -->
+  <div class="sec-title">02 · 작성 규칙</div>
+  <div class="rules-grid">
+
+    <div class="rule-card">
+      <div class="rule-num">RULE 01</div>
+      <div class="rule-title">사용자를 주체로</div>
+      <div class="rule-detail">고객이 행동을 완료했다는 느낌을 줄 것.<br>시스템이 처리한 맥락이면 피동형 사용.</div>
+      <table class="verb-table">
+        <thead>
+          <tr><th>맥락</th><th>어미</th><th>예시</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>사용자 행동 결과</td>
+            <td class="tag-active">능동형</td>
+            <td>입금했습니다</td>
+          </tr>
+          <tr>
+            <td>시스템 처리 결과</td>
+            <td class="tag-passive">피동형</td>
+            <td>매수가 체결되었습니다</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-num">RULE 02</div>
+      <div class="rule-title">마침표 규칙</div>
+      <div class="rule-detail">
+        <strong>메인 문구</strong>: 마침표 생략<br>
+        <strong>서브 문구</strong>: 마침표 포함<br><br>
+        <span style="color:var(--muted); font-size:11px;">메인은 제목성 문구, 서브는 완성된 문장이므로 각기 다른 규칙 적용</span>
+      </div>
+    </div>
+
+    <div class="rule-card full">
+      <div class="rule-num">RULE 03 · 금지어 &amp; 권장어</div>
+      <div class="rule-title">단어 선택 기준</div>
+      <div class="word-grid">
+        <div class="word-col bad">
+          <div class="word-col-title">❌ 금지 패턴</div>
+          <span class="word-tag">신청 되었습니다</span>
+          <span class="word-tag">반드시 확인해주세요</span>
+          <span class="word-tag">완료 (명사 단독)</span>
+          <span class="word-tag">처리했습니다 (시스템 주체)</span>
+          <span class="word-tag">정상적으로</span>
+        </div>
+        <div class="word-col good">
+          <div class="word-col-title">✓ 권장 패턴</div>
+          <span class="word-tag">입금했습니다</span>
+          <span class="word-tag">변경했습니다</span>
+          <span class="word-tag">매수가 체결되었습니다</span>
+          <span class="word-tag">거래내역을 확인해보세요</span>
+          <span class="word-tag">신청했습니다</span>
+          <span class="word-tag">등록했습니다</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 03 예시 -->
+  <div class="sec-title">03 · Before / After 예시</div>
+  <div class="examples-row">
+    <div class="example-card bad">
+      <div class="ex-label">✕ 개선 전</div>
+      <div class="ex-item">
+        <div class="ex-context">입금 완료 화면</div>
+        <div class="ex-main">입금 신청 되었습니다.</div>
+        <div class="ex-sub">반드시 이체내역을 확인해 주세요.</div>
+        <div class="ex-annotation">피동형(능동 맥락 오류) + "반드시" 강압적 + 메인에 마침표</div>
+      </div>
+      <div class="ex-item">
+        <div class="ex-context">이체한도 변경 완료</div>
+        <div class="ex-main">이체한도 변경 완료</div>
+        <div class="ex-sub"></div>
+        <div class="ex-annotation">명사형 나열 → 결과 전달 불명확, 동사 어미 없음</div>
+      </div>
+    </div>
+
+    <div class="example-card good">
+      <div class="ex-label">✓ 개선 후</div>
+      <div class="ex-item">
+        <div class="ex-context">입금 완료 화면</div>
+        <div class="ex-main">입금했습니다</div>
+        <div class="ex-sub">거래내역을 확인해보세요.</div>
+        <div class="ex-annotation">능동형 + 부드러운 안내 + 마침표 규칙 모두 준수</div>
+      </div>
+      <div class="ex-item">
+        <div class="ex-context">이체한도 변경 완료</div>
+        <div class="ex-main">이체한도를 변경했습니다</div>
+        <div class="ex-sub"></div>
+        <div class="ex-annotation">능동형 동사 어미로 결과 명확하게 전달</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 LLM 프롬프트 -->
+  <div class="sec-title">04 · LLM 프롬프트 템플릿</div>
+  <div class="prompt-block">
+    <div class="prompt-block-header">
+      <div class="prompt-block-title">복사 후 ChatGPT / Claude에 그대로 붙여넣기</div>
+      <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">복사하기</button>
+    </div>
+    <div class="prompt-text" id="promptText"><span class="p-comment"># 역할</span>
+당신은 금융 서비스 UX 라이터입니다.
+아래 규칙과 예시를 참고해 <span class="p-value">성공 메시지</span>를 작성하세요.
+
+<span class="p-section">[구조 규칙]</span>
+<span class="p-rule">- 메인 문구: 행동 결과 전달 / 15자 이내 / 마침표 생략</span>
+<span class="p-rule">- 서브 문구: 부가정보 / 20자 이내 / 마침표 포함 / 필요시에만 작성</span>
+<span class="p-rule">- 전체 2줄 이내</span>
+
+<span class="p-section">[어미 규칙]</span>
+<span class="p-rule">- 사용자가 행동한 결과 → 능동형: "~했습니다"</span>
+<span class="p-rule">- 시스템이 처리한 결과 → 피동형: "~되었습니다"</span>
+
+<span class="p-section">[금지]</span>
+<span class="p-rule">- "반드시", "정상적으로", 명사형 단독 나열 사용 금지</span>
+<span class="p-rule">- 메인 문구에 마침표 금지</span>
+
+<span class="p-section">[참고 예시]</span>
+좋은 예: 메인 "입금했습니다" / 서브 "거래내역을 확인해보세요."
+좋은 예: 메인 "이체한도를 변경했습니다" / 서브 없음
+나쁜 예: 메인 "입금 신청 되었습니다." / 서브 "반드시 확인해주세요."
+
+<span class="p-section">[입력값]</span>
+- 완료된 행동: <span class="p-var">{예: 비밀번호 변경, 카드 신청, 주소 등록}</span>
+- 주체: <span class="p-var">{사용자 / 시스템}</span>
+- 서브 문구 필요 여부: <span class="p-var">{필요 / 불필요}</span>
+- 서브 문구에 넣을 내용: <span class="p-var">{예: 다음 영업일 적용, 앱 재시작 필요}</span>
+
+<span class="p-section">[출력 형식]</span>
+메인 문구:
+서브 문구:</div>
+  </div>
+
+  <!-- 05 체크리스트 -->
+  <div class="sec-title">05 · 작성 후 검증 체크리스트</div>
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box" onclick="toggleCheck(this)"></div>
+      <div class="check-text">
+        <strong>메인 문구에 마침표가 없는가?</strong>
+        <div class="check-sub">메인은 제목성 문구 → 마침표 생략</div>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box" onclick="toggleCheck(this)"></div>
+      <div class="check-text">
+        <strong>어미가 맥락에 맞는가?</strong>
+        <div class="check-sub">사용자 행동 → 능동형 / 시스템 처리 → 피동형</div>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box" onclick="toggleCheck(this)"></div>
+      <div class="check-text">
+        <strong>전체 2줄 이내인가?</strong>
+        <div class="check-sub">메인 + 서브 합산 기준</div>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box" onclick="toggleCheck(this)"></div>
+      <div class="check-text">
+        <strong>금지 패턴이 없는가?</strong>
+        <div class="check-sub">"반드시", "정상적으로", 명사형 나열 여부 확인</div>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box" onclick="toggleCheck(this)"></div>
+      <div class="check-text">
+        <strong>서브 문구가 꼭 필요한 정보인가?</strong>
+        <div class="check-sub">없어도 이해에 문제없다면 생략하는 것이 원칙</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 연관 패턴 -->
+  <div class="sec-title">06 · 연관 패턴 카드</div>
+  <div class="related">
+    <div class="related-card">
+      <div class="related-type">Pattern Card 02</div>
+      <div class="related-name">오류 메시지 <span class="soon">준비중</span></div>
+      <div class="related-desc">사용자 실수·시스템 오류 유형별 작성 패턴</div>
+    </div>
+    <div class="related-card">
+      <div class="related-type">Pattern Card 03</div>
+      <div class="related-name">경고 메시지 <span class="soon">준비중</span></div>
+      <div class="related-desc">작업 가능하나 주의가 필요한 상황</div>
+    </div>
+    <div class="related-card">
+      <div class="related-type">Pattern Card 04</div>
+      <div class="related-name">안내 메시지 <span class="soon">준비중</span></div>
+      <div class="related-desc">정보 전달 목적의 중립적 메시지</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+}
+
+const rawPrompt = `# 역할
+당신은 금융 서비스 UX 라이터입니다.
+아래 규칙과 예시를 참고해 성공 메시지를 작성하세요.
+
+[구조 규칙]
+- 메인 문구: 행동 결과 전달 / 15자 이내 / 마침표 생략
+- 서브 문구: 부가정보 / 20자 이내 / 마침표 포함 / 필요시에만 작성
+- 전체 2줄 이내
+
+[어미 규칙]
+- 사용자가 행동한 결과 → 능동형: "~했습니다"
+- 시스템이 처리한 결과 → 피동형: "~되었습니다"
+
+[금지]
+- "반드시", "정상적으로", 명사형 단독 나열 사용 금지
+- 메인 문구에 마침표 금지
+
+[참고 예시]
+좋은 예: 메인 "입금했습니다" / 서브 "거래내역을 확인해보세요."
+좋은 예: 메인 "이체한도를 변경했습니다" / 서브 없음
+나쁜 예: 메인 "입금 신청 되었습니다." / 서브 "반드시 확인해주세요."
+
+[입력값]
+- 완료된 행동: {예: 비밀번호 변경, 카드 신청, 주소 등록}
+- 주체: {사용자 / 시스템}
+- 서브 문구 필요 여부: {필요 / 불필요}
+- 서브 문구에 넣을 내용: {예: 다음 영업일 적용, 앱 재시작 필요}
+
+[출력 형식]
+메인 문구:
+서브 문구:`;
+
+function copyPrompt() {
+  navigator.clipboard.writeText(rawPrompt).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ 복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '복사하기';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
