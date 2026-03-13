@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX 라이팅 가이드라인</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #faf9f7;
+  --white: #ffffff;
+  --orange: #f47b20;
+  --orange-light: #fff4ec;
+  --orange-border: #ffd4ae;
+  --ink: #1a1a1a;
+  --ink2: #444;
+  --muted: #888;
+  --border: #e8e4dc;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Noto Sans KR', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* 상단 헤더 */
+.top-bar {
+  background: var(--ink);
+  padding: 14px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top-bar-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #fff;
+  letter-spacing: 0.1em;
+}
+
+.top-bar-ver {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #555;
+}
+
+/* 히어로 */
+.hero {
+  padding: 72px 48px 56px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+
+.hero-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.hero h1 span {
+  color: var(--orange);
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: var(--ink2);
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 520px;
+  margin-bottom: 36px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--orange);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+/* 메인 콘텐츠 */
+.content {
+  padding: 48px;
+  max-width: 1000px;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 200px;
+}
+
+/* 패턴 카드 그리드 */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+.pattern-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 30px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.pattern-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(244,123,32,0.1);
+}
+
+.pattern-card.active {
+  border-color: var(--orange);
+  background: var(--orange-light);
+}
+
+.pattern-card.coming {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.card-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.card-name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--ink2);
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.card-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-rule-tag {
+  font-size: 11px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 9px;
+  color: var(--ink2);
+  font-weight: 400;
+}
+
+.pattern-card.active .card-rule-tag {
+  background: white;
+}
+
+.card-arrow {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  font-size: 18px;
+  color: var(--orange);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pattern-card:hover .card-arrow {
+  opacity: 1;
+}
+
+.coming-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--border);
+  color: var(--muted);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+/* 사용법 섹션 */
+.how-to {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 36px;
+  margin-bottom: 56px;
+}
+
+.how-to h2 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.step {
+  padding-right: 24px;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: 4px;
+  top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--orange);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+
+.step-text {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.step-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+/* LLM 활용 안내 */
+.llm-tip {
+  background: #111318;
+  border-radius: 16px;
+  padding: 32px 36px;
+}
+
+.llm-tip-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5b7fff;
+  margin-bottom: 12px;
+}
+
+.llm-tip h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.llm-tip p {
+  font-size: 13px;
+  color: #888;
+  font-weight: 300;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.llm-flow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.flow-step {
+  background: #1e2026;
+  border: 1px solid #2a2d35;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #c9d1e0;
+}
+
+.flow-arrow {
+  color: #3a3f4a;
+  font-size: 16px;
+}
+
+.flow-step.highlight {
+  border-color: #5b7fff;
+  color: #5b7fff;
+}
+
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-title">UX Writing Guidelines</div>
+  <div class="top-bar-ver">v1.0 · 2025</div>
+</div>
+
+<div class="hero">
+  <div class="hero-label">Pattern Card System</div>
+  <h1>UX 라이팅<br><span>가이드라인</span></h1>
+  <p class="hero-desc">
+    메시지 유형별 작성 규칙, LLM 프롬프트 템플릿,<br>
+    검증 체크리스트를 한 곳에서 관리하는 패턴 카드 시스템
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">메시지 유형</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">완성된 패턴</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">준비 중</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="section-label">패턴 카드</div>
+
+  <div class="cards-grid">
+
+    <!-- 성공 메시지 - 활성 -->
+    <a href="success.html" class="pattern-card active">
+      <div class="card-arrow">→</div>
+      <div class="card-type">Pattern Card · 완성</div>
+      <div class="card-icon">✅</div>
+      <div class="card-name">성공 메시지</div>
+      <div class="card-desc">요청이 성공적으로 처리되었음을 고객이 명확히 인지하고 안심할 수 있도록 돕는 메시지</div>
+      <div class="card-rules">
+        <span class="card-rule-tag">능동/피동 규칙</span>
+        <span class="card-rule-tag">2줄 이내</span>
+        <span class="card-rule-tag">마침표 규칙</span>
+        <span class="card-rule-tag">LLM 프롬프트</span>
+      </div>
+    </a>
+
+    <!-- 오류 메시지 - 준비중 -->
+    <div class="pattern-card coming">
+      <div class="coming-badge">준비 중</div>
+      <div class="card-type">Pattern Card</div>
+      <div class="card-icon">⚠️</div>
+      <div class="card-name">오류 메시지</div>
+      <div class="card-desc">사용자 실수·시스템 오류 상황에서 원인과 해결 방법을 안내하는 메시지</div>
+      <div class="card-rules">
+        <span class="card-rule-tag">오류 유형 분류</span>
+        <span class="card-rule-tag">해결 방법 포함</span>
+        <span class="card-rule-tag">금지어 사전</span>
+      </div>
+    </div>
+
+    <!-- 경고 메시지 - 준비중 -->
+    <div class="pattern-card coming">
+      <div class="coming-badge">준비 중</div>
+      <div class="card-type">Pattern Card</div>
+      <div class="card-icon">🔔</div>
+      <div class="card-name">경고 메시지</div>
+      <div class="card-desc">작업은 계속할 수 있으나 주의가 필요한 상황을 알리는 메시지</div>
+      <div class="card-rules">
+        <span class="card-rule-tag">심각도 레벨</span>
+        <span class="card-rule-tag">선택지 제공</span>
+      </div>
+    </div>
+
+    <!-- 안내 메시지 - 준비중 -->
+    <div class="pattern-card coming">
+      <div class="coming-badge">준비 중</div>
+      <div class="card-type">Pattern Card</div>
+      <div class="card-icon">ℹ️</div>
+      <div class="card-name">안내 메시지</div>
+      <div class="card-desc">정보 전달 목적의 중립적인 메시지. 행동 유도 없이 상태를 알림</div>
+      <div class="card-rules">
+        <span class="card-rule-tag">정보성 어미</span>
+        <span class="card-rule-tag">중립 톤</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 사용 방법 -->
+  <div class="section-label">이렇게 사용하세요</div>
+  <div class="how-to">
+    <h2>패턴 카드 활용 방법</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">STEP 01</div>
+        <div class="step-text">유형 선택</div>
+        <div class="step-sub">작성할 메시지가 성공·오류·경고·안내 중 어디에 해당하는지 선택</div>
+      </div>
+      <div class="step">
+        <div class="step-num">STEP 02</div>
+        <div class="step-text">규칙 확인</div>
+        <div class="step-sub">패턴 카드의 구조·어미·금지어 규칙을 읽고 이해</div>
+      </div>
+      <div class="step">
+        <div class="step-num">STEP 03</div>
+        <div class="step-text">프롬프트 복사</div>
+        <div class="step-sub">LLM 템플릿 복사 후 변수({}) 부분을 채워서 AI에 붙여넣기</div>
+      </div>
+      <div class="step">
+        <div class="step-num">STEP 04</div>
+        <div class="step-text">체크리스트 검증</div>
+        <div class="step-sub">완성된 메시지를 체크리스트로 검토 후 채택</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LLM 흐름 -->
+  <div class="section-label">AI 활용 흐름</div>
+  <div class="llm-tip">
+    <div class="llm-tip-title">For Writers · LLM 연동 방식</div>
+    <h2>패턴 카드 → AI → 메시지 완성</h2>
+    <p>각 패턴 카드 안의 프롬프트 템플릿을 복사해 ChatGPT나 Claude에 붙여넣으세요.<br>
+    변수({}) 부분만 채우면 규칙을 지킨 초안이 바로 나옵니다.</p>
+    <div class="llm-flow">
+      <div class="flow-step">패턴 카드 열기</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step highlight">프롬프트 복사</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">변수 채우기</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">AI에 붙여넣기</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step highlight">초안 완성</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">체크리스트 검증</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
